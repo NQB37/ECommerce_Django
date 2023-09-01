@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock  %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 order-md-1">
+            <h4 class="mb-3">Billing address</h4>
+            <hr class="mb-4">
+            <form method="post" action="{% url 'docheckout' %}">
+                {% csrf_token %}
+                {% for address in addresses %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="selected-address" value="{{ address.id }}" required>
+                            <label class="form-check-label" for="selected-address">
+                                <div class="mb-3">
+                                    <label for="address">Address</label>
+                                    <p class="card-text">{{ address.address }}</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address">Address 2</label>
+                                    <p class="card-text">{{ address.address2 }}</p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 mb-3">
+                                        <label for="country">Country</label>
+                                        <p class="card-text">{{ address.country }}</p>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="country">State</label>
+                                        <p class="card-text">{{ address.state }}</p>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="country">Zip</label>
+                                        <p class="card-text">{{ address.zip }}</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="row my-2">
+                    <div class="col col-lg-6 mb-4 mb-lg-0">
+                      <a href="#address" class="btn btn-primary btn-lg me-3">
+                        Address <i class="fa-solid fa-plus"></i>
+                      </a>
+                    </div>
+                </div>
+            
+                <h4 class="mb-3">Payment</h4>
+                <hr class="mb-4">
+                {% for payment in payments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="selected-payment" value="{{ payment.id }}" required>
+                            <label class="form-check-label" for="selected-payment">
+                                <div class="row">
+                                    <div class="col-md-5 mb-3">
+                                        <label for="country">Name on card</label>
+                                        <p class="card-text">{{ payment.name }}</p>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="country">Credit card number</label>
+                                        <p class="card-text">{{ payment.cardnumber }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 mb-3">
+                                        <label for="country">Expiration</label>
+                                        <p class="card-text">{{ payment.get_expire }}</p>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="country">CVV</label>
+                                        <p class="card-text">{{ payment.cvv }}</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="row  my-2">
+                    <div class="col col-lg-6 mb-4 mb-lg-0">
+                      <a href="#payment" class="btn btn-primary btn-lg">
+                        Payment <i class="fa-solid fa-plus"></i>
+                      </a>
+                    </div>
+                </div>
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Checkout</button>
+            </form>
+        </div>
+        <div class="col-md-4 order-md-1">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Your cart</span>
+            </h4>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong>${{ carttotal }}</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock content %}

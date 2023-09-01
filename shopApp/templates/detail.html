@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}{{item.name}}{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-5 bg-secondary bg-cover">
+            <img src="{{ item.image.url }}" class="card-img-top h-100" style="object-fit: cover" >
+        </div>
+        <div class="col-md-7 bg-light rounded-xl p-4">
+            <h1 class="mb-4">{{ item.name }}</h1>
+            <p class="lead mb-4"><strong>Price:</strong> ${{ item.price }}</p>
+            <p class="mb-4"><strong>Seller:</strong> {{ item.created_by }}</p>
+            {% if item.description %}
+            <p class="mb-4">
+                <strong>Description:</strong> {{ item.description }}
+            </p>
+            {% endif %}
+            <p class="mb-4"><strong>Rating:</strong> 
+                <span style="display:inline">
+                    {% if item.get_average_rating > 0.5 %}
+                        <span class="fa fa-star text-warning"></span>
+                    {% endif %}
+                    {% if item.get_average_rating > 1.5 %}
+                        <span class="fa fa-star text-warning"></span>
+                    {% endif %}
+                    {% if item.get_average_rating > 2.5 %}
+                        <span class="fa fa-star text-warning"></span>
+                    {% endif %}
+                    {% if item.get_average_rating > 3.5 %}
+                        <span class="fa fa-star text-warning"></span>
+                    {% endif %}
+                    {% if item.get_average_rating > 4.5 %}
+                        <span class="fa fa-star text-warning"></span>
+                    {% endif %}
+                </span>
+            </p>
+            {%if request.user.is_authenticated and user.is_superuser%}
+                <a href="{% url 'deleteitem' item.id %}" class="btn btn-danger mx-1">Remove</a>
+                <a href="{% url 'edititem' item.id %}" class="btn btn-success mx-1">Edit</a>
+            {%elif request.user.is_authenticated %}
+                <form method="post" action="{% url 'addtocart' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Add to cart</button>
+                </form>
+            {%endif%}
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h2 class="mb-5 text-center">Related Items</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for item in related_items %}
+        <div class="col">
+            <a href="{% url 'detail' item.id %}" class="text-decoration-none">
+            <div class="card h-100 border-0 shadow-sm">
+                <img src="{{ item.image.url }}" class="card-img-top rounded-top" alt="{{ item.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text text-muted">Price: {{ item.price }}</p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <p class="text-end"><small class="text-muted">View details</small></p>
+                </div>
+            </div>
+            </a>
+        </div>
+      {% endfor %}
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h2 class="mb-5 text-center">Reviews</h2>
+    
+    {% if request.user.is_authenticated and not user.is_superuser %}
+    <div class="card mb-3">
+        <div class="card-body d-inline"> 
+            <form id="review-form" action="{% url 'review' item.id %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <textarea name="comment" id="id_comment" class="form-control" rows="2" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <div class="col-1">
+                        <input type="number" name="rating" id="id_rating" class="form-control" min="1" max="5" step="0.5" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary justify-content-end">Submit</button>
+            </form>
+        </div>
+    </div>
+    {% endif%}
+
+    {% for review in reviews %}
+        <div class="card mb-3">
+            <div class="card-body d-inline"> 
+                <div class="row">
+                    <div class="col-2">
+                        <img src="{{ review.user.customer.image.url }}" alt="Avatar" class="img rounded-circle mx-5" style="width: 100px;" />
+                    </div>
+                    <div class="col-10">
+                        <h6>{{review.user}}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Rating: 
+                            <span style="display:inline">
+                                {% if review.rating <= 5 and review.rating >= 4.5 %}
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                {% elif review.rating < 4.5 and review.rating >= 3.5 %}
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                {% elif review.rating < 3.5 and review.rating >= 2.5 %}
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                {% elif review.rating < 2.5 and review.rating >= 1.5 %}
+                                    <span class="fa fa-star text-warning"></span>
+                                    <span class="fa fa-star text-warning"></span>
+                                {% elif review.rating < 1.5 and review.rating >= 0.5 %}
+                                    <span class="fa fa-star text-warning"></span>
+                                {% endif %}
+                            </span>
+                        </h6>
+                        <p class="card-text">{{ review.comment }}</p>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        {% empty %}
+            <p>No reviews yet.</p>
+    {%endfor%}
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Submit review form using AJAX
+        $('#review-form').on('submit', function(event) {
+            event.preventDefault();
+            
+            var form = $(this);
+            var url = form.attr('action');
+            var formData = form.serialize();
+            
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                success: function(response) {
+                    $('#review-message').text('Review submitted successfully!');
+                    form.trigger('reset');
+                    // Optional: Update the review section with the new review
+                },
+                error: function(response) {
+                    $('#review-message').text('Error submitting review. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock content %}

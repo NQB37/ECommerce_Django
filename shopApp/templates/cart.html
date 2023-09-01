@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-2">Your Cart</h1>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <hr class="mb">
+            {% for cart in cartdetail %}
+            <div class="row mb-4 rounded border shadow-sm py-3" >
+                <div class="col-md-3">
+                    <img src="{{ cart.item.image.url }}" alt="{{ cart.item.name }}" class="img-fluid">
+                </div>
+                <div class="col-md-7">
+                    <h4>{{ cart.item.name }}</h4>
+                    <p>Quantity:
+                    <form method="post" action="{% url 'updatecartquantity' cart.id %}">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {% comment %} <button class="btn btn-outline-secondary" type="submit" name="quantity" value="{{ cart.quantity|add:'-1' }}" >-</button> {% endcomment %}
+                            <div>
+                                <input type="text" class="form-control text-center" name="quantity" value="{{ cart.quantity }}">
+                            </div>
+                            {% comment %} <button class="btn btn-outline-secondary" type="submit" name="quantity" value="{{ cart.quantity|add:'1' }}" >+</button> {% endcomment %}
+                        </div>
+                    </form>
+                    </p>
+                    <form method="post" action="{% url 'removefromcart' cart.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-outline-danger btn-sm" type="submit"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                    
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex align-items-center h-100">
+                        <p class="text-center fs-5 mb-0 fw-bold">{{ cart.get_item_total }} $</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p>No items here.</p>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Order Summary</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Total</td>
+                                <td>${{ carttotal }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-end">
+                        <form method="post" action="{% url 'clearcart' %}">
+                          {% csrf_token %}
+                          <button class="btn btn-outline-secondary me-2" type="submit">Clear Cart</button>
+                        </form>
+                        <form method="post" action="{% url 'checkout' %}">
+                            {% csrf_token %}
+                            {% if cartdetail %}
+                                <button class="btn btn-primary" type="submit">Checkout</button>
+                            {% else %}
+                            <button class="btn btn-primary" type="submit" disabled>Checkout</button>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Order
+{% endblock title %}
+
+{% block content %}
+<div class="container py-5">
+	<h1 class="mb-4">Orders</h1>
+	<div class="row">
+		<div class="col">
+			<h3 class="mb-4">Pending</h3>
+			<hr class="mb-2">
+			{% for order in pending_orders %}
+			<div class="card mb-3">
+				<div class="card-body">
+					<h5 class="card-title">Order #{{ order.id }}</h5>
+					<p class="card-text">Total: ${{ order.get_total_cost }}</p>
+					<p class="card-text">Date: {{ order.created_at }}</p>
+				<a href="#" class="btn btn-primary">View Order</a>
+				</div>
+			</div>
+			{% empty %}
+				<p>No order.</p>
+			{% endfor %}
+		</div>
+		<div class="col">
+			<h3 class="mb-4">Completed</h3>
+			<hr class="mb-2">
+			{% for order in completed_orders %}
+			<div class="card mb-3">
+				<div class="card-body">
+					<h5 class="card-title">Order #{{ order.id }}</h5>
+					<p class="card-text">Total: ${{ order.get_total_cost }}</p>
+					<p class="card-text">Date: {{ order.created_at }}</p>
+					<a href="#" class="btn btn-primary">View Order</a>
+				</div>
+			</div>
+			{% empty %}
+				<p>No order.</p>
+			{% endfor %}
+		</div>
+		<div class="col">
+			<h3 class="mb-4">Cancelled</h3>
+			<hr class="mb-2">
+			{% for order in cancelled_orders %}
+			<div class="card mb-3">
+				<div class="card-body">
+					<h5 class="card-title">Order #{{ order.id }}</h5>
+					<p class="card-text">Total: ${{ order.get_total_cost }}</p>
+					<p class="card-text">Date: {{ order.created_at }}</p>
+					<a href="#" class="btn btn-primary">View Order</a>
+				</div>
+			</div>
+			{% empty %}
+				<p>No order.</p>
+			{% endfor %}
+		</div>
+	</div>
+  </div>
+  
+{% endblock content %}

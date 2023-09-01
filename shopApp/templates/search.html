@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Search Items{% endblock title %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+        <h2 class="text-center mb-4">Search Items</h2>
+        <form method="get" action="{%url 'searchresults'%}" class="card p-4 rounded-xl shadow-sm">
+            {% csrf_token %}
+            <input type="text" name="query" value="{{query}}" class="form-control me-2 rounded-pill my-3" placeholder="Search" aria-label="Search">
+            {{ form.query }}
+            <button type="submit" class="btn btn-primary btn-lg btn-block rounded-pill">Search</button>
+        </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
